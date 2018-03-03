@@ -1,0 +1,39 @@
+.navbar {
+  border: none;
+}
+
+.container-fluid {
+  margin-top: -20px;
+}
+
+.navbar-inverse {
+  padding-top: 18px;
+  margin-bottom: -1px;
+  border-color:  #1B1723;
+  background-color: #1B1723;
+  border-radius: unset;
+}
+
+.navbar-collapse {
+  padding-top: 0px;
+  margin-bottom: -1px;
+  background-color: #1B1723;
+
+}
+.navbar-collapse .collapse .in {
+  border: none;
+}
+
+.navbar-inverse .navbar-toggle {
+  border-color:  #1B1723;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+  color: white;
+}
+
+.banner {
+  margin-top: -1px;
+  width: 102%;
+  background-color:  #1B1723;
+}
