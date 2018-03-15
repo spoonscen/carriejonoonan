@@ -1,8 +1,8 @@
+@import url("https://use.typekit.net/yxs8alz.css");
+
 body {
-  background: white;
-  position: absolute;
-  width: 100vw;
-  font-family: sans-serif;
-  color: white;
+  font-family: "museo-sans", "sans-serif";
+  background-color: #1B1723;
+  margin: 0;
 }
 

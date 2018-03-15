@@ -1,40 +1,47 @@
 import React, { Component } from 'react'
-import './App.css'
+import styled from 'styled-components'
+
 import homeImage from './assets/home-image.svg'
 import { BrowserRouter as Router, Route } from "react-router-dom"
 import ScrollableAnchor from 'react-scrollable-anchor'
-import productsImage1 from './assets/product-design/1.png'
-import productsImage2 from './assets/product-design/2.png'
-import productsImage3 from './assets/product-design/3.png'
 import Navigation from './Navigation'
 import Page from './Page'
+import { ThemeProvider } from 'styled-components'
+
+const theme = {
+  black: '#1B1723',
+  pink: '#FFA4F6',
+  green: '#86EDDF',
+  blue: '#5D76DD',
+}
 
 const App = () => (
-  <Router>
-    <div>
-      <Navigation />
-      <Route exact path="/" component={Home} />
-      <Route exact path="/about" component={About} />
-    </div>
-  </Router>
+  <ThemeProvider theme={theme}>
+    <Router>
+      <div>
+        <Navigation />
+        <Route exact path="/" component={Home} />
+        <Route exact path="/about" component={About} />
+      </div>
+    </Router>
+  </ThemeProvider>
 )
 
 
+class Home extends Component {
 
-
-const Home = () => (
-  <Page image={homeImage}>
-    <ScrollableAnchor id={'product'}>
-      <ProductDesign />
-    </ScrollableAnchor>
-    <ScrollableAnchor id={'visual'}>
-      <VisualDesign />
-    </ScrollableAnchor>
-    <ScrollableAnchor id={'on-the-side'}>
-      <OnTheSide />
-    </ScrollableAnchor>
-  </Page>
-)
+  render() {
+    return (
+      <div>
+        <Page image={homeImage}>
+          <ProductDesign />
+          <VisualDesign />
+          <OnTheSide />
+        </Page>
+      </div>
+    )
+  }
+}
 
 const About = () => (
   <Page image={homeImage}>
@@ -42,50 +49,53 @@ const About = () => (
   </Page>
 )
 
-const Label = ({ label }) => <div className="design-label"><span><i>{label}</i></span></div>
+const LabelWrapper = styled.div`
+  color: white;
+`
+
+const Label = ({ label }) => <LabelWrapper><span><i>{label}</i></span></LabelWrapper>
+
+const AnchorBox = styled.div`
+  padding-bottom: 3000px;
+  padding-top: 70px;
+  margin-top: -60px;
+  &:nth-child(3) {
+    background-color: ${props => props.theme.pink}
+  }
+  &:nth-child(4) {
+    background-color: ${props => props.theme.green}
+  }
+  &:nth-child(5) {
+    background-color: ${props => props.theme.blue}
+  }
+`
 
 class OnTheSide extends Component {
   render() {
     return (
-      <div id="product-design">
+      <AnchorBox id="on-the-side">
         <Label label="on the side" />
-      </div >
+      </AnchorBox >
     )
   }
 }
 class VisualDesign extends Component {
   render() {
     return (
-      <div id="product-design">
+      <AnchorBox id="visual">
         <Label label="visual design" />
-      </div >
+      </AnchorBox >
     )
   }
 }
-
 
 // Must be a class to have a ref
 class ProductDesign extends Component {
   render() {
     return (
-      <div id="product-design">
+      <AnchorBox id="product">
         <Label label="product design" />
-        <div className="products-container">
-          <div className="row">
-            <div className="col-md-12 behind">
-              <img src={productsImage1} />
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-6 no-padding">
-              <img src={productsImage2} />
-            </div>
-            <div className="col-md-6 no-padding">
-              <img src={productsImage3} />
-            </div>
-          </div>
-        </div>
-      </div >
+      </AnchorBox >
     )
   }
 }

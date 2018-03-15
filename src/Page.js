@@ -1,11 +1,14 @@
 import React from 'react'
+import styled from 'styled-components'
+
+const Banner = styled.img`
+  width: 100%;
+`
 
 const Page = ({ children, image }) => (
   <div id="container">
-    <div>
-      <img alt="loading" className="banner" src={image} />
-      <div className="arrow"></div>
-    </div>
+    <div id="secret"></div>
+    <Banner alt="Carrie Noonan" id="banner" src={image} />
     {children}
   </div>
 )
