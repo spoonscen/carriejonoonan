@@ -17,7 +17,7 @@ const Nav = styled.table`
 `
 
 const NavItem = styled.td`
-  min-width: 82px;
+  min-width: 112px;
   font-size: 18px;
   line-height: 22px;
   &:nth-child(1) {
@@ -71,6 +71,7 @@ const initialState = {
   visualActive: 0,
   onTheSideActive: 0,
   aboutActive: 0,
+  bannerActive: 0,
 }
 
 export default class extends React.Component {
@@ -79,33 +80,21 @@ export default class extends React.Component {
   componentDidMount() {
     window.scroll(0, 0)
     window.history.pushState('', document.title, window.location.pathname);
-
+    this.setState({ ...initialState, bannerActive: 1 })
     this.observer = new IntersectionObserver(([entry], observer) => {
       const hash = '#' + entry.target.id
-      if (entry.isIntersecting) {
-        if (entry.target.id === 'secret') {
-          if (window.history.pushState) {
-            window.history.pushState('', document.title, window.location.pathname);
-          } else {
-            window.location.hash = '';
-          }
-          this.setState(initialState)
-        } else if (window.history.pushState) {
-          window.history.pushState(null, null, hash);
-        } else {
-          window.location.hash = hash;
-        }
-        this.setState({ ...initialState, [camelCase(entry.target.id) + 'Active']: 1 })
+      if (entry.intersectionRatio < 0.25 && entry.target.id === 'banner') {
+        this.setState({ ...initialState, productActive: 1 })
+      } else if (entry.isIntersecting) {
+        window.history.pushState(null, null, hash);
+        this.setState({ ...initialState, [camelCase(entry.target.id) + 'Active']: entry.intersectionRatio })
       }
-    }, {
-        rootMargin: '0px',
-        root: null,
-        threshold: [0, 0.5]
-      })
+      console.log(this.state)
+    }, { threshold: [0, 0.25, 0.5, 0.75, 1], rootMargin: '60px' })
+    this.observer.observe(document.getElementById('banner'))
     this.observer.observe(document.getElementById('product'))
     this.observer.observe(document.getElementById('visual'))
     this.observer.observe(document.getElementById('on-the-side'))
-    this.observer.observe(document.getElementById('secret'))
   }
 
   componentWillUnmount() {
