@@ -82,19 +82,26 @@ export default class extends React.Component {
     window.history.pushState('', document.title, window.location.pathname);
     this.setState({ ...initialState, bannerActive: 1 })
     this.observer = new IntersectionObserver(([entry], observer) => {
-      const hash = '#' + entry.target.id
-      if (entry.intersectionRatio < 0.25 && entry.target.id === 'banner') {
-        this.setState({ ...initialState, productActive: 1 })
-      } else if (entry.isIntersecting) {
+      const id = entry.target.id
+      console.log(id)
+      const hash = '#' + id
+      if (entry.isIntersecting) {
         window.history.pushState(null, null, hash);
-        this.setState({ ...initialState, [camelCase(entry.target.id) + 'Active']: entry.intersectionRatio })
+        this.setState({ ...initialState, [camelCase(id) + 'Active']: 1 })
       }
+      // if (entry.intersectionRatio < 0.25 && entry.target.id === 'banner') {
+      //   this.setState({ ...initialState, productActive: 1 })
+      // } else if (entry.isIntersecting) {
+      //   window.history.pushState(null, null, hash);
+      //   this.setState({ ...initialState, [camelCase(entry.target.id) + 'Active']: entry.intersectionRatio })
+      // }
       console.log(this.state)
-    }, { threshold: [0, 0.25, 0.5, 0.75, 1], rootMargin: '60px' })
+
+    }, { threshold: [0, .25, .5, .75, 1], root: document.getElementById('nav') })
     this.observer.observe(document.getElementById('banner'))
-    this.observer.observe(document.getElementById('product'))
-    this.observer.observe(document.getElementById('visual'))
-    this.observer.observe(document.getElementById('on-the-side'))
+    this.observer.observe(document.getElementById('product-label'))
+    this.observer.observe(document.getElementById('visual-label'))
+    this.observer.observe(document.getElementById('on-the-side-label'))
   }
 
   componentWillUnmount() {
@@ -105,7 +112,7 @@ export default class extends React.Component {
     const { productActive, visualActive, onTheSideActive, aboutActive } = this.state
     return (
 
-      <Nav>
+      <Nav id="nav">
         <tbody>
           <tr>
             <NavItem>
