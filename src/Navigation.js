@@ -3,6 +3,8 @@ import styled, { className } from 'styled-components'
 import { Link } from 'react-router-dom'
 import { NavHashLink } from 'react-router-hash-link';
 import { camelCase, range, debounce } from 'lodash'
+import { slide as Menu } from 'react-burger-menu'
+
 
 const Nav = styled.table`
   padding-top: 1em;
@@ -13,6 +15,7 @@ const Nav = styled.table`
   top: 0;
   width: 100%;
   background-color: ${props => props.theme.black};
+}
 `
 
 const NavItem = styled.td`
@@ -116,19 +119,35 @@ export default class extends React.Component {
   debouncedHandleScroll = debounce(this.handleScroll, 5)
 
   render() {
+    return (
+      this.renderNav()
+      // this.renderMobileNav()
+    )
+  }
+
+  scroll = (el) => {
+    el.scrollIntoView({ block: "start", inline: "nearest", behavior: 'smooth' })
+  }
+
+  renderMobileNav = () => {
     const { productActive, visualActive, onTheSideActive, aboutActive } = this.state
     return (
+      <Menu right>
+        <ProductLink scroll={this.scroll} active={productActive} to={maybeAnchor('#product')}>product</ProductLink>
+        <VisualLink active={visualActive} scroll={this.scroll} to={maybeAnchor('#visual')}>visual</VisualLink>
+        <OnTheSideLink active={onTheSideActive} scroll={this.scroll} to={maybeAnchor('#on-the-side')}>on the side</OnTheSideLink>
+        <AboutLink active={aboutActive} to='/about'>about</AboutLink>
+      </Menu>
+    );
+  }
 
+  renderNav = () => {
+    const { productActive, visualActive, onTheSideActive, aboutActive } = this.state
+    return (
       <Nav id="nav">
         <tbody>
           <tr>
-            <NavItem>
-              <ProductLink
-                scroll={this.scroll}
-                active={productActive}
-                to={maybeAnchor('#product')}>product
-                </ProductLink>
-            </NavItem>
+            <NavItem><ProductLink scroll={this.scroll} active={productActive} to={maybeAnchor('#product')}>product</ProductLink></NavItem>
             <NavItem><VisualLink active={visualActive} scroll={this.scroll} to={maybeAnchor('#visual')}>visual</VisualLink></NavItem>
             <NavItem><OnTheSideLink active={onTheSideActive} scroll={this.scroll} to={maybeAnchor('#on-the-side')}>on the side</OnTheSideLink></NavItem>
             <NavItem><AboutLink active={aboutActive} to='/about'>about</AboutLink></NavItem>
@@ -136,10 +155,6 @@ export default class extends React.Component {
         </tbody>
       </Nav>
     )
-  }
-
-  scroll = (el) => {
-    el.scrollIntoView({ block: "start", inline: "nearest", behavior: 'smooth' })
   }
 }
 
