@@ -2,8 +2,7 @@ import React from 'react'
 import styled, { className } from 'styled-components'
 import { Link } from 'react-router-dom'
 import { NavHashLink } from 'react-router-hash-link';
-import { camelCase } from 'lodash'
-
+import { camelCase, range, debounce } from 'lodash'
 
 const Nav = styled.table`
   padding-top: 1em;
@@ -66,47 +65,55 @@ const AboutLink = styled(BaseLink) `
   background-color: ${props => props.active ? props.theme.pink : props.theme.black};
 `
 
-const initialState = {
-  productActive: 0,
-  visualActive: 0,
-  onTheSideActive: 0,
-  aboutActive: 0,
-  bannerActive: 0,
-}
-
 export default class extends React.Component {
-  state = initialState
-  observer
-  componentDidMount() {
-    window.scroll(0, 0)
-    window.history.pushState('', document.title, window.location.pathname);
-    this.setState({ ...initialState, bannerActive: 1 })
-    this.observer = new IntersectionObserver(([entry], observer) => {
-      const id = entry.target.id
-      console.log(id)
-      const hash = '#' + id
-      if (entry.isIntersecting) {
-        window.history.pushState(null, null, hash);
-        this.setState({ ...initialState, [camelCase(id) + 'Active']: 1 })
-      }
-      // if (entry.intersectionRatio < 0.25 && entry.target.id === 'banner') {
-      //   this.setState({ ...initialState, productActive: 1 })
-      // } else if (entry.isIntersecting) {
-      //   window.history.pushState(null, null, hash);
-      //   this.setState({ ...initialState, [camelCase(entry.target.id) + 'Active']: entry.intersectionRatio })
-      // }
-      console.log(this.state)
+  initialState = {
+    productActive: 0,
+    visualActive: 0,
+    onTheSideActive: 0,
+    aboutActive: 0,
+    bannerActive: 0,
+  }
+  state = this.initialState
+  navHeight = 60
+  anchors = []
 
-    }, { threshold: [0, .25, .5, .75, 1], root: document.getElementById('nav') })
-    this.observer.observe(document.getElementById('banner'))
-    this.observer.observe(document.getElementById('product-label'))
-    this.observer.observe(document.getElementById('visual-label'))
-    this.observer.observe(document.getElementById('on-the-side-label'))
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.debouncedHandleScroll);
+    this.anchors = [
+      document.getElementById('banner'),
+      document.getElementById('product'),
+      document.getElementById('visual'),
+      document.getElementById('on-the-side'),
+    ]
+
+    if (window.location.hash.includes('#')) {
+      const id = window.location.hash.replace('#', '')
+      this.setState({ ...this.initialState, [camelCase([id, 'Active'])]: 1 })
+    }
   }
 
   componentWillUnmount() {
-    this.observer && this.observer.disconnect
+    window.removeEventListener('scroll', this.debouncedHandleScroll);
   }
+
+
+
+  handleScroll = () => {
+    this.anchors.forEach(el => {
+      const { top } = el.getBoundingClientRect()
+      if (top < this.navHeight && top > -10) {
+        if (el.id === 'banner') {
+          window.history.pushState('', document.title, window.location.pathname);
+        } else {
+          window.history.pushState(null, null, '#' + el.id);
+        }
+        this.setState({ ...this.initialState, [camelCase([el.id, 'Active'])]: 1 })
+      }
+    })
+  }
+
+  debouncedHandleScroll = debounce(this.handleScroll, 5)
 
   render() {
     const { productActive, visualActive, onTheSideActive, aboutActive } = this.state

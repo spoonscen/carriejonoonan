@@ -53,7 +53,7 @@ const LabelWrapper = styled.div`
   color: white;
 `
 
-const Label = ({ label, id }) => <LabelWrapper><span><i id={id}>{label}</i></span></LabelWrapper>
+const Label = ({ label }) => <LabelWrapper><span><i >{label}</i></span></LabelWrapper>
 
 const AnchorBox = styled.div`
   padding-bottom: 3000px;
@@ -74,7 +74,7 @@ class OnTheSide extends Component {
   render() {
     return (
       <AnchorBox id="on-the-side">
-        <Label id="on-the-side-label" label="on the side" />
+        <Label label="on the side" />
       </AnchorBox >
     )
   }
@@ -83,7 +83,7 @@ class VisualDesign extends Component {
   render() {
     return (
       <AnchorBox id="visual">
-        <Label id="visual-label" label="visual design" />
+        <Label label="visual design" />
       </AnchorBox >
     )
   }
@@ -94,7 +94,7 @@ class ProductDesign extends Component {
   render() {
     return (
       <AnchorBox id="product">
-        <Label id="product-label" label="product design" />
+        <Label label="product design" />
       </AnchorBox >
     )
   }
