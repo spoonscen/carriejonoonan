@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-
+import { debounce } from 'lodash'
 import carrieBanner from './assets/Carrie-Banner.svg'
+import carrieBannerMobile from './assets/Carrie-Banner-Mobile.svg'
 import { BrowserRouter as Router, Route } from "react-router-dom"
 import ScrollableAnchor from 'react-scrollable-anchor'
 import Navigation from './Navigation'
@@ -16,25 +17,49 @@ const theme = {
   grey: '#D7DBDE',
 }
 
-const App = () => (
-  <ThemeProvider theme={theme}>
-    <Router>
-      <div>
-        <Navigation />
-        <Route exact path="/" component={Home} />
-        <Route exact path="/about" component={About} />
-      </div>
-    </Router>
-  </ThemeProvider>
-)
+const getInnerWidth = () => window.innerWidth
 
+class App extends Component {
+  state = {
+    innerWidth: getInnerWidth(),
+  }
 
-class Home extends Component {
+  handleResize = () => {
+    this.setState({ innerWidth: window.innerWidth })
+  }
+  componentDidMount() {
+    window.addEventListener('resize', this.debouncedHandleResize)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.debouncedHandleResize)
+  }
+
+  debouncedHandleResize = debounce(this.handleResize, 100)
 
   render() {
     return (
+      <ThemeProvider theme={theme}>
+        <Router>
+          <div>
+            <Navigation innerWidth={this.state.innerWidth} />
+            <Route exact path="/" render={() => <Home innerWidth={this.state.innerWidth} />} />
+            <Route exact path="/about" component={About} />
+          </div>
+        </Router>
+      </ThemeProvider>
+    )
+  }
+}
+
+
+
+
+class Home extends Component {
+  render() {
+    return (
       <div>
-        <Page image={carrieBanner}>
+        <Page image={this.props.innerWidth > 800 ? carrieBanner : carrieBannerMobile}>
           <ProductDesign />
           <VisualDesign />
           <OnTheSide />

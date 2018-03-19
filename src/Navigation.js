@@ -74,15 +74,13 @@ export default class extends React.Component {
     onTheSideActive: 0,
     aboutActive: 0,
     bannerActive: 0,
-    innerWidth: 700,
   }
   state = this.initialState
   navHeight = 60
   anchors = []
 
   componentDidMount() {
-    window.addEventListener('scroll', this.debouncedHandleScroll);
-    window.addEventListener('resize', this.debouncedHandleResize)
+    window.addEventListener('scroll', this.debouncedHandleScroll)
     this.anchors = [
       document.getElementById('banner'),
       document.getElementById('product'),
@@ -98,12 +96,8 @@ export default class extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.debouncedHandleScroll);
-    window.removeEventListener('resize', this.debouncedHandleResize)
   }
 
-  handleResize = () => {
-    this.setState({ innerWidth: window.innerWidth })
-  }
 
   handleScroll = () => {
     this.anchors.forEach(el => {
@@ -120,11 +114,10 @@ export default class extends React.Component {
   }
 
   debouncedHandleScroll = debounce(this.handleScroll, 5)
-  debouncedHandleResize = debounce(this.handleResize, 100)
 
   render() {
     return (
-      this.state.innerWidth > 600 ? this.renderNav() : this.renderMobileNav()
+      this.props.innerWidth > 800 ? this.renderNav() : this.renderMobileNav()
     )
   }
 
