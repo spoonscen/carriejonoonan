@@ -3,7 +3,7 @@ import styled, { className } from 'styled-components'
 import { Link } from 'react-router-dom'
 import { NavHashLink } from 'react-router-hash-link';
 import { camelCase, range, debounce } from 'lodash'
-import { slide as Menu } from 'react-burger-menu'
+import Menu from 'react-burger-menu/lib/menus/slide'
 
 
 const Nav = styled.table`
@@ -15,7 +15,6 @@ const Nav = styled.table`
   top: 0;
   width: 100%;
   background-color: ${props => props.theme.black};
-}
 `
 
 const NavItem = styled.td`
@@ -55,12 +54,12 @@ const ProductLink = styled(BaseLink) `
   background-color: ${props => props.active ? props.theme.blue : props.theme.black};
 `
 const VisualLink = styled(BaseLink) `
-  color: ${props => props.active ? props.theme.black : props.theme.green};
-  background-color: ${props => props.active ? props.theme.green : props.theme.black};
-`
-const OnTheSideLink = styled(BaseLink) `
   color: ${props => props.active ? props.theme.black : props.theme.pink};
   background-color: ${props => props.active ? props.theme.pink : props.theme.black};
+`
+const OnTheSideLink = styled(BaseLink) `
+  color: ${props => props.active ? props.theme.black : props.theme.green};
+  background-color: ${props => props.active ? props.theme.green : props.theme.black};
 `
 
 const AboutLink = styled(BaseLink) `
@@ -75,14 +74,15 @@ export default class extends React.Component {
     onTheSideActive: 0,
     aboutActive: 0,
     bannerActive: 0,
+    innerWidth: 700,
   }
   state = this.initialState
   navHeight = 60
   anchors = []
 
-
   componentDidMount() {
     window.addEventListener('scroll', this.debouncedHandleScroll);
+    window.addEventListener('resize', this.debouncedHandleResize)
     this.anchors = [
       document.getElementById('banner'),
       document.getElementById('product'),
@@ -98,9 +98,12 @@ export default class extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.debouncedHandleScroll);
+    window.removeEventListener('resize', this.debouncedHandleResize)
   }
 
-
+  handleResize = () => {
+    this.setState({ innerWidth: window.innerWidth })
+  }
 
   handleScroll = () => {
     this.anchors.forEach(el => {
@@ -117,11 +120,11 @@ export default class extends React.Component {
   }
 
   debouncedHandleScroll = debounce(this.handleScroll, 5)
+  debouncedHandleResize = debounce(this.handleResize, 100)
 
   render() {
     return (
-      this.renderNav()
-      // this.renderMobileNav()
+      this.state.innerWidth > 600 ? this.renderNav() : this.renderMobileNav()
     )
   }
 
@@ -132,7 +135,7 @@ export default class extends React.Component {
   renderMobileNav = () => {
     const { productActive, visualActive, onTheSideActive, aboutActive } = this.state
     return (
-      <Menu right>
+      <Menu>
         <ProductLink scroll={this.scroll} active={productActive} to={maybeAnchor('#product')}>product</ProductLink>
         <VisualLink active={visualActive} scroll={this.scroll} to={maybeAnchor('#visual')}>visual</VisualLink>
         <OnTheSideLink active={onTheSideActive} scroll={this.scroll} to={maybeAnchor('#on-the-side')}>on the side</OnTheSideLink>
